@@ -6,10 +6,11 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] float delay = 1f;
     [SerializeField] AudioClip crash;
     [SerializeField] AudioClip success;
+	AudioSource audioSource;
     bool isTransitioning = false;
 
 void Start() {
-    AudioSource audio = GetComponent<AudioSource>();
+    audioSource = GetComponent<AudioSource>();
 }
 
     void OnCollisionEnter(Collision other) {
@@ -35,11 +36,11 @@ void Start() {
     }
     void Crash()
     {
-        GetComponent<AudioSource>().Stop();
+        audioSource.Stop();
         isTransitioning = true;
         var move = GetComponent<Movement>(); 
         move.enabled = false;
-        GetComponent<AudioSource>().PlayOneShot(crash);
+        audioSource.PlayOneShot(crash);
         Invoke("Reload", delay);
     }
 
@@ -51,11 +52,11 @@ void Start() {
 
     void NextLevelSequence()
     {
-        GetComponent<AudioSource>().Stop();
+        audioSource.Stop();
         isTransitioning = true;
         var move = GetComponent<Movement>(); 
         move.enabled = false;
-        GetComponent<AudioSource>().PlayOneShot(success);
+        audioSource.PlayOneShot(success);
         Invoke("NextLevel", delay);
     }
 
