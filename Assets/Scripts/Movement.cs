@@ -9,6 +9,10 @@ public class Movement : MonoBehaviour
     [SerializeField] float mainThrust = 100f;
     [SerializeField] float rotationThrust = 50f;
     [SerializeField] AudioClip engine;
+
+    [SerializeField] ParticleSystem thrustParticles;
+    [SerializeField] ParticleSystem rightParticles;
+    [SerializeField] ParticleSystem leftParticles;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,30 +31,72 @@ public class Movement : MonoBehaviour
     {
        if (Input.GetKey(KeyCode.Space))
        {    
-            if (!audioSource.isPlaying)
-            {
-                audioSource.PlayOneShot(engine);
-            }
-            
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+            StartThrust();
        }
-       else if (audioSource.isPlaying)
+       else
        {
-            audioSource.Stop();
+            StopThrust();
        }
-
     }
+
+    void StopThrust()
+    {
+        audioSource.Stop();
+        thrustParticles.Stop();
+    }
+
+    void StartThrust()
+    {
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(engine);
+        }
+        if (!thrustParticles.isPlaying)
+        {
+            thrustParticles.Play();
+        }
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+    }
+
 
     void ProcessRotation()
     {
         if (Input.GetKey(KeyCode.A))
         {
-            ApplyRotation(rotationThrust);
+            TurnLeft();
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            ApplyRotation(-rotationThrust);
+            TurnRight();
         }
+        else
+        {
+            StopTurning();
+        }
+    }
+
+    void TurnLeft()
+    {
+        ApplyRotation(rotationThrust);
+        if (!leftParticles.isPlaying)
+        {
+            leftParticles.Play();
+        }
+    }
+
+    void TurnRight()
+    {
+        ApplyRotation(-rotationThrust);
+        if (!rightParticles.isPlaying)
+        {
+            rightParticles.Play();
+        }
+    }
+
+    void StopTurning()
+    {
+        rightParticles.Stop();
+        leftParticles.Stop();
     }
 
     void ApplyRotation(float frame)
